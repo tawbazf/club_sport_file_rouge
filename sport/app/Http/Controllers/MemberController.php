@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use App\Providers\AuthServiceProvider;
-use App\Policies\MemberPolicy;
-class MemberController extends Controller
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+class MemberController
 {
+    use AuthorizesRequests;
     public function index()
     {
         $this->authorize('viewAny', Member::class);

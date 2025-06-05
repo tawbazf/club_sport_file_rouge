@@ -11,10 +11,11 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PublicController;
 
-Route::get('/', [PublicController::class, 'services'])->name('public.home');
-Route::get('/classes', [PublicController::class, 'services'])->name('public.classes');
-Route::get('/coaches', [PublicController::class, 'services'])->name('public.coaches');
+Route::get('/', [PublicController::class, 'home'])->name('public.home');
+Route::get('/classes', [PublicController::class, 'classes'])->name('public.classes');
+Route::get('/coaches', [PublicController::class, 'coaches'])->name('public.coaches');
 Route::get('/schedule', [PublicController::class, 'schedule'])->name('public.schedule');
+Route::get('/contact', [PublicController::class, 'showContactForm'])->name('public.contact.form');
 Route::post('/contact', [PublicController::class, 'contact'])->name('public.contact');
 
 Route::get('/login', fn() => view('auth.signup'))->name('login');
@@ -25,7 +26,7 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::prefix('admin')->middleware('role:admin')->group(function () {
-        Route::get('/dashboard', fn() => view('admin.members.index'))->name('admin.dashboard');
+        Route::get('/dashboard', [MemberController::class, 'index'])->name('admin.dashboard');
         Route::resource('members', MemberController::class);
         Route::resource('coaches', CoachController::class);
         Route::resource('courses', CourseController::class);
