@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('member_id')->constrained()->onDelete('cascade');
             $table->foreignId('subscription_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('session_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('training_sessions_id')->nullable()->constrained()->onDelete('cascade');
             $table->decimal('amount', 8, 2);
             $table->text('details')->nullable();
             $table->dateTime('issue_date');

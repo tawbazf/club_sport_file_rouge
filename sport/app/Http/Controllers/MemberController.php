@@ -7,7 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-
+use App\Providers\AuthServiceProvider;
+use App\Policies\MemberPolicy;
 class MemberController extends Controller
 {
     public function index()

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('member_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('session_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('training_sessions_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('action');
             $table->dateTime('action_date');
             $table->text('details')->nullable();

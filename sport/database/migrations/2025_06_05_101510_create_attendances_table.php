@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('member_id')->constrained()->onDelete('cascade');
             $table->foreignId('course_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('session_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('training_sessions_id')->nullable()->constrained()->onDelete('cascade');
             $table->enum('status', ['present', 'absent', 'late'])->default('present');
             $table->dateTime('attendance_date');
             $table->timestamps();
