@@ -6,7 +6,7 @@
                 <a class="nav-link" href="{{ route('members.index') }}">Membres</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('coaches.index') }}">Coachs</a>
+                <a class="nav-link" href="{{ route('admin.coaches.index') }}">Coachs</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('courses.index') }}">Cours</a>

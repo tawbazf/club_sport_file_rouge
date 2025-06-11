@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -17,13 +18,28 @@ class UserController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $user = User::find(Auth::id());
-            $user->last_login_at = now();
-            $user->save();
-            return response()->json(['message' => 'Connexion réussie', 'user' => $user], 200);
+            $user = User::find(Auth::id()); // Get user from database directly
+            if ($user) {
+                $user->last_login_at = now();
+                $user->save();
+            }
+
+            // Role-based redirection
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->intended('/admin/reports'); // Or route('admin.dashboard')
+                case 'coach':
+                    return redirect()->intended('/coach/sessions'); // Or route('coach.dashboard')
+                case 'member':
+                    return redirect()->intended('/member/classes');  // Or route('member.dashboard')
+                default:
+                    return redirect()->intended('/home'); // Fallback redirect
+            }
         }
 
-        return response()->json(['message' => 'Identifiants incorrects'], 401);
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email'); // Redirect back with error for web form
     }
 
     public function register(Request $request)
@@ -40,14 +56,16 @@ class UserController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => $data['role'],
-        ]);
+        ]);}
 
-        return response()->json(['message' => 'Utilisateur créé', 'user' => $user], 201);
-    }
-
-    public function logout()
+      
+    public function logout(Request $request)
     {
-        Auth::logout();
-        return response()->json(['message' => 'Déconnexion réussie'], 200);
+       Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+         return redirect('/login'); 
     }
+    
 }

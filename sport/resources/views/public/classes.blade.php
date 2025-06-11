@@ -14,13 +14,19 @@
                     <p><strong>Horaire:</strong> {{ $course->start_time->format('d/m/Y H:i') }}</p>
                     <p><strong>Statut:</strong> {{ $course->status }}</p>
                     @auth
-                    <form action="{{ route('reservations.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="course_id" value="{{ $course->id }}">
-                        <input type="hidden" name="member_id" value="{{ auth()->user()->member->id }}">
-                        <button type="submit" class="btn btn-primary">Réserver</button>
-                    </form>
-                    @endauth
+    @if(auth()->user()->member)
+        <form action="{{ route('member.reservations.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="course_id" value="{{ $course->id }}">
+            <input type="hidden" name="member_id" value="{{ auth()->user()->member->id }}">
+            <button type="submit" class="btn btn-primary">Réserver</button>
+        </form>
+    @else
+        <div class="alert alert-warning">
+            Seuls les membres peuvent réserver un cours.
+        </div>
+    @endif
+@endauth
                 </div>
             </div>
         </div>

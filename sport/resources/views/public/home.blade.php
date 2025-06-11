@@ -7,7 +7,7 @@
     <div class="container">
         <h1 class="display-4 font-weight-bold mb-4">Bienvenue au Club de Sport</h1>
         <p class="lead mb-5">Découvrez nos services premium, abonnements flexibles, et cours collectifs animés par des professionnels.</p>
-        <a href="#subscriptions" class="btn btn-primary btn-lg mr-3">Nos Abonnements</a>
+        <a href="{{ route('public.subscriptions') }}" class="btn btn-primary btn-lg mr-3">Nos Abonnements</a>
         <a href="{{ route('public.contact') }}" class="btn btn-outline-light btn-lg">Essai Gratuit</a>
     </div>
 </div>
@@ -17,21 +17,21 @@
     <div class="row text-center mb-5">
         <div class="col-md-4 mb-4">
             <div class="feature-box p-4 rounded-lg shadow-sm">
-                <img src="https://icons.veryicon.com/png/o/miscellaneous/linear-small-icon/workout-5.png" alt="Workout" class="img-fluid mb-3" style="height: 80px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/2936/2936886.png" alt="Workout" class="img-fluid mb-3" style="height: 80px;">
                 <h3>Équipements Modernes</h3>
                 <p class="text-muted">Matériel haut de gamme pour des résultats optimaux</p>
             </div>
         </div>
         <div class="col-md-4 mb-4">
             <div class="feature-box p-4 rounded-lg shadow-sm">
-                <img src="https://icons.veryicon.com/png/o/miscellaneous/linear-small-icon/coach-2.png" alt="Coach" class="img-fluid mb-3" style="height: 80px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" alt="Coach" class="img-fluid mb-3" style="height: 80px;">
                 <h3>Coach Experts</h3>
                 <p class="text-muted">Accompagnement personnalisé par des professionnels</p>
             </div>
         </div>
         <div class="col-md-4 mb-4">
             <div class="feature-box p-4 rounded-lg shadow-sm">
-                <img src="https://icons.veryicon.com/png/o/miscellaneous/linear-small-icon/schedule-34.png" alt="Schedule" class="img-fluid mb-3" style="height: 80px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/1570/1570887.png" alt="Schedule" class="img-fluid mb-3" style="height: 80px;">
                 <h3>Flexibilité</h3>
                 <p class="text-muted">Horaires adaptés à votre emploi du temps</p>
             </div>
@@ -105,7 +105,17 @@
             <div class="col-md-4 mb-4">
                 <div class="card course-card h-100 border-0 shadow-sm overflow-hidden">
                     <div class="position-relative">
-                        <img src="https://source.unsplash.com/random/300x200/?fitness,{{ str_replace(' ', '', $course->title) }}" class="card-img-top" alt="{{ $course->title }}" style="height: 200px; object-fit: cover;">
+                        <!-- Dynamic course images based on course type -->
+                        @php
+                            $courseImages = [
+                                'Yoga' => 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                                'Crossfit' => 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                                'Pilates' => 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                                'Zumba' => 'https://images.unsplash.com/photo-1547153760-18fc86324498?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+                            ];
+                            $courseImage = $courseImages[$course->title] ?? 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60';
+                        @endphp
+                        <img src="{{ $courseImage }}" class="card-img-top" alt="{{ $course->title }}" style="height: 200px; object-fit: cover;">
                         <span class="badge badge-success position-absolute" style="top: 10px; right: 10px;">Nouveau</span>
                     </div>
                     <div class="card-body">

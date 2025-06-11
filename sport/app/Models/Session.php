@@ -24,6 +24,10 @@ class Session extends Model
     ];
 
     // Relations
+    public function course()
+{
+    return $this->belongsTo(Course::class);
+}
     public function member()
     {
         return $this->belongsTo(Member::class);

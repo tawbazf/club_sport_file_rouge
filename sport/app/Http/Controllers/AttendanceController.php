@@ -13,7 +13,7 @@ class AttendanceController extends Controller
             ->when($request->start_date && $request->end_date, function ($query) use ($request) {
                 $query->whereBetween('attendance_date', [$request->start_date, $request->end_date]);
             })->get();
-        return response()->json($attendances);
+        return view('admin.reports', compact('attendances'));
     }
 
     public function store(Request $request)

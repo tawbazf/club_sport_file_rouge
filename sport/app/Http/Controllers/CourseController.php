@@ -3,15 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Models\Coach;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
+
+
     public function index()
     {
         $courses = Course::with('coach.user', 'reservations')->get();
-        return response()->json($courses);
+        return view('admin.courses.index', compact('courses'));
+    }
+
+    public function create()
+    {
+        $coaches = Coach::with('user')->get();
+        return view('admin.courses.create', compact('coaches'));
     }
 
     public function store(Request $request)
@@ -26,7 +36,7 @@ class CourseController extends Controller
             'status' => 'required|in:planned,cancelled,completed',
         ]);
 
-        // Vérifier qu'aucun cours n'est planifié pour le coach à ce moment
+        // Check for coach scheduling conflicts
         $existingCourse = Course::where('coach_id', $data['coach_id'])
             ->where(function ($query) use ($data) {
                 $query->whereBetween('start_time', [$data['start_time'], $data['end_time']])
@@ -34,17 +44,24 @@ class CourseController extends Controller
             })->exists();
 
         if ($existingCourse) {
-            return response()->json(['message' => 'Le coach est déjà occupé à ce créneau'], 422);
+            return redirect()->back()->withErrors(['coach_id' => 'Le coach est déjà occupé à ce créneau.']);
         }
 
-        $course = Course::create($data);
-        return response()->json(['message' => 'Cours créé', 'course' => $course], 201);
+        Course::create($data);
+
+        return redirect()->route('admin.courses.index')->with('success', 'Cours créé avec succès.');
     }
 
     public function show(Course $course)
     {
         $course->load('coach.user', 'reservations.member.user');
-        return response()->json($course);
+        return view('admin.courses.show', compact('course'));
+    }
+
+    public function edit(Course $course)
+    {
+        $coaches = Coach::with('user')->get();
+        return view('admin.courses.edit', compact('course', 'coaches'));
     }
 
     public function update(Request $request, Course $course)
@@ -59,14 +76,27 @@ class CourseController extends Controller
             'status' => 'required|in:planned,cancelled,completed',
         ]);
 
+        // Check for coach scheduling conflicts (excluding current course)
+        $existingCourse = Course::where('coach_id', $data['coach_id'])
+            ->where('id', '!=', $course->id)
+            ->where(function ($query) use ($data) {
+                $query->whereBetween('start_time', [$data['start_time'], $data['end_time']])
+                      ->orWhereBetween('end_time', [$data['start_time'], $data['end_time']]);
+            })->exists();
+
+        if ($existingCourse) {
+            return redirect()->back()->withErrors(['coach_id' => 'Le coach est déjà occupé à ce créneau.']);
+        }
+
         $course->update($data);
-        return response()->json(['message' => 'Cours mis à jour', 'course' => $course]);
+
+        return redirect()->route('admin.courses.index')->with('success', 'Cours mis à jour avec succès.');
     }
 
     public function destroy(Course $course)
     {
         $course->delete();
-        return response()->json(['message' => 'Cours supprimé']);
+        return redirect()->route('admin.courses.index')->with('success', 'Cours supprimé avec succès.');
     }
 
     public function checkAndCancel(Course $course)
@@ -74,8 +104,8 @@ class CourseController extends Controller
         $reservations = $course->reservations()->count();
         if ($reservations < 3 && $course->status === 'planned') {
             $course->update(['status' => 'cancelled']);
-            return response()->json(['message' => 'Cours annulé (moins de 3 participants)']);
+            return redirect()->route('admin.courses.index')->with('success', 'Cours annulé (moins de 3 participants).');
         }
-        return response()->json(['message' => 'Aucune annulation nécessaire']);
+        return redirect()->route('admin.courses.index')->with('info', 'Aucune annulation nécessaire.');
     }
 }

@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Session;
 use Illuminate\Http\Request;
 use App\Models\Course;
-
+use Illuminate\Support\Facades\Auth;
 class SessionController extends Controller
 {
     public function index()
     {
-        $sessions = Session::with('member.user', 'coach.user')->get();
-        return response()->json($sessions);
+        $sessions = Session::whereHas('course', function ($query) {
+            $query->where('coach_id', Auth::user()->id);
+        })->get();
+
+        return view('coach.sessions', compact('sessions'));
     }
 
     public function store(Request $request)

@@ -51,4 +51,17 @@ class PublicController extends Controller
         // Handle contact form submission (e.g., send email or store in database)
         return redirect()->route('public.home')->with('success', 'Message envoyé avec succès !');
     }
+    public function subscriptions()
+{
+    $subscriptionTypes = Subscription::select('type', 'price')
+                            ->where('status', 'active')
+                            ->distinct()
+                            ->get()
+                            ->groupBy('type')
+                            ->map(function ($group) {
+                                return $group->first(); // Get the first item of each type group
+                            });
+
+    return view('public.subscriptions', compact('subscriptionTypes'));
+}
 }
